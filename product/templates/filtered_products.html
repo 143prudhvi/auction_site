@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Filtered Products</title>
+</head>
+<body>
+    <form method="get" action="{% url 'filtered_products' %}">
+        <label for="brand">Brand:</label>
+        <select name="brand" id="brand">
+            <option value="">All Brands</option>
+            {% for brand in distinct_brands %}
+                <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>{{ brand }}</option>
+            {% endfor %}
+        </select>
+        
+        <label for="seller">Seller:</label>
+        <select name="seller" id="seller">
+            <option value="">All Sellers</option>
+            {% for seller in distinct_sellers %}
+                <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Apply Filters</button>
+    </form>
+
+    <ul>
+        {% for product in products %}
+            <li>(Brand: {{ product.brand }}, Seller: {{ product.sellerName }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
