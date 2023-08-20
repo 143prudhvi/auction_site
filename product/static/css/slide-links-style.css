@@ -1,0 +1,21 @@
+.prev-next-links {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.prev-next-links a {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.prev-next-links a:hover {
+    cursor: pointer;
+    background-color: #ddd;
+}

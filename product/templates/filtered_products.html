@@ -2,6 +2,27 @@
 <html>
 <head>
     <title>Filtered Products</title>
+    <style>
+        .slideshow-container {
+            max-width: 200px;
+            border: 1px solid #ccc;
+            padding: 24px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            text-align: center;
+            margin: 8px;
+            border-radius: 8px;
+        }
+        
+        .mySlides {
+            display: none;
+        }
+        
+        .slideshow-img {
+            width: 100%;
+        }
+    </style>    
+    <link href="static/css/slide-links-style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <form method="get" action="{% url 'filtered_products' %}">
@@ -26,8 +47,25 @@
 
     <ul>
         {% for product in products %}
-            <li>(Brand: {{ product.brand }}, Seller: {{ product.sellerName }})</li>
+            <div class="slideshow-container" data-id="{{product.productId}}">
+                {% for key,value in product_images.items %}
+                    {% if product.productId in key %}
+                        {% for image_link in value %}
+                            <div class="{{product.productId}} mySlides">
+                                <img class="slideshow-img" src="{{ image_link }}" alt="Product Image">
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                {% endfor %}
+
+                <div class="prev-next-links">
+                    <a class="prev" onclick="plusSlides(-1, '{{product.productId}}')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1, '{{product.productId}}')">&#10095;</a>
+                </div>
+            </div>
         {% endfor %}
     </ul>
+    <script src="static/js/slide-show.js"></script>
 </body>
 </html>

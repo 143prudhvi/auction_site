@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from .models import Product
+import os
 
 def filtered_products(request):
     brand = request.GET.get('brand', None)
     seller = request.GET.get('seller', None)
-
     products = Product.objects.all()
 
     if brand:
@@ -12,7 +12,9 @@ def filtered_products(request):
     
     if seller:
         products = products.filter(sellerName=seller)
-    
+    product_images = {}
+    for product in products:
+        product_images[product.productId] = get_images_from_path("static/Images/" + product.pictureLocation)
     distinct_brands = Product.objects.values_list('brand', flat=True).distinct()
     distinct_sellers = Product.objects.values_list('sellerName', flat=True).distinct()
     
@@ -21,7 +23,12 @@ def filtered_products(request):
         'distinct_brands': distinct_brands,
         'distinct_sellers': distinct_sellers,
         'selected_brand': brand,
-        'selected_seller': seller 
+        'selected_seller': seller ,
+        'product_images': product_images
     }
 
     return render(request, 'filtered_products.html', context)
+
+def get_images_from_path(folder_path : str):
+    file_list = [folder_path + f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    return file_list
