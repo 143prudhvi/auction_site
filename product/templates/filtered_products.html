@@ -1,71 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Filtered Products</title>
-    <style>
-        .slideshow-container {
-            max-width: 200px;
-            border: 1px solid #ccc;
-            padding: 24px;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-            display: inline-block;
-            text-align: center;
-            margin: 8px;
-            border-radius: 8px;
-        }
-        
-        .mySlides {
-            display: none;
-        }
-        
-        .slideshow-img {
-            width: 100%;
-        }
-    </style>    
+    <title>Auction Data</title>
+    <link class="favicon" rel="shortcut icon" type="image/x-icon" id="dynamic-favicon" href="https://ssbprod.wichita.edu/wu-shock-favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">  
+    <link href="static/css/main.css" rel="stylesheet" type="text/css">
     <link href="static/css/slide-links-style.css" rel="stylesheet" type="text/css">
+    <link href="static/css/search-container.css" rel="stylesheet" type="text/css">
+    <link href="static/css/products.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <form method="get" action="{% url 'filtered_products' %}">
-        <label for="brand">Brand:</label>
-        <select name="brand" id="brand">
-            <option value="">All Brands</option>
-            {% for brand in distinct_brands %}
-                <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>{{ brand }}</option>
-            {% endfor %}
-        </select>
-        
-        <label for="seller">Seller:</label>
-        <select name="seller" id="seller">
-            <option value="">All Sellers</option>
-            {% for seller in distinct_sellers %}
-                <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
-            {% endfor %}
-        </select>
+    <div class="header"></div>
+    <div class="main">
+        <form method="get" action="{% url 'filtered_products' %}">
+            <div class="search-container">
+                <select name="brand" id="brand">
+                    <option value="">All Brands</option>
+                    {% for brand in distinct_brands %}
+                        <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>{{ brand }}</option>
+                    {% endfor %}
+                </select>
+                
+                <select name="seller" id="seller">
+                    <option value="">All Sellers</option>
+                    {% for seller in distinct_sellers %}
+                        <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
+                    {% endfor %}
+                </select>
 
-        <button type="submit">Apply Filters</button>
-    </form>
-
-    <ul>
-        {% for product in products %}
-            <div class="slideshow-container" data-id="{{product.productId}}">
-                {% for key,value in product_images.items %}
-                    {% if product.productId in key %}
-                        {% for image_link in value %}
-                            <div class="{{product.productId}} mySlides">
-                                <img class="slideshow-img" src="{{ image_link }}" alt="Product Image">
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    
-                {% endfor %}
-
-                <div class="prev-next-links">
-                    <a class="prev" onclick="plusSlides(-1, '{{product.productId}}')">&#10094;</a>
-                    <a class="next" onclick="plusSlides(1, '{{product.productId}}')">&#10095;</a>
-                </div>
+                <button type="submit">Apply Filters</button>
             </div>
-        {% endfor %}
-    </ul>
+        </form>
+
+        <ul>
+            {% for product in products %}
+                <div class="{{product.productId}} slideshow-container" data-id="{{product.productId}}">
+                    <input type="checkbox" id="{{product.productId}}_checkbox" class="product-grey-scale" onclick="toggleGrayScale('{{product.productId}}')" name="product-grey-scale-checkbox">
+                    {% for key,value in product_images.items %}
+                        {% if product.productId in key %}
+                            {% for image_link in value %}
+                                <div class="{{product.productId}} mySlides">
+                                    <img class="slideshow-img" src="{{ image_link }}" alt="Product Image">
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                    {% endfor %}
+
+                    <div class="prev-next-links">
+                        <a class="prev" onclick="plusSlides(-1, '{{product.productId}}')">&#10094;</a>
+                        <a class="next" onclick="plusSlides(1, '{{product.productId}}')">&#10095;</a>
+                    </div>
+                    <strong class="product-id">{{product.productId}}</strong>
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="footer"></div>
     <script src="static/js/slide-show.js"></script>
+    <script src="static/js/checkbox.js"></script>
 </body>
 </html>

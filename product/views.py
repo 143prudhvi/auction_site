@@ -15,8 +15,8 @@ def filtered_products(request):
     product_images = {}
     for product in products:
         product_images[product.productId] = get_images_from_path("static/Images/" + product.pictureLocation)
-    distinct_brands = Product.objects.values_list('brand', flat=True).distinct()
-    distinct_sellers = Product.objects.values_list('sellerName', flat=True).distinct()
+    distinct_brands = Product.objects.values_list('brand', flat=True).order_by('brand').distinct()
+    distinct_sellers = Product.objects.values_list('sellerName', flat=True).order_by('sellerName').distinct()
     
     context = {
         'products': products,

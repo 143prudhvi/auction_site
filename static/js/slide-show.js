@@ -4,8 +4,6 @@ for (i = 0; i < products.length; i++){
     showSlides(slideIndex, products[i].getAttribute("data-id"))
 }
 
-showSlides(slideIndex, );
-
 function plusSlides(n, productId) {
     showSlides(slideIndex += n, productId);
 }

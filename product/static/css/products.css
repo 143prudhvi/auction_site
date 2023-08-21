@@ -1,0 +1,31 @@
+.slideshow-container {
+    max-width: 160px;
+    border: 1px solid #ccc;
+    padding: 24px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    text-align: center;
+    margin: 8px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.mySlides {
+    display: none;
+}
+
+.product-grey-scale{
+    position: absolute;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+}
+
+.slideshow-img {
+    width: 100%;
+}
+
+.product-id{
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 400;
+}
