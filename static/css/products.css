@@ -68,6 +68,10 @@
     height: auto;
 }
 
+.product-card{
+    max-width: 40%;
+}
+
 .close-btn{
     position: absolute;
     top: 24px;
