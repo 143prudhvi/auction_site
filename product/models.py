@@ -2,13 +2,24 @@ from django.db import models
 
 # Create your models here.
 
-class Product(models.Model):
-    productId = models.CharField(primary_key=True, max_length=30)
-    sellerName = models.CharField(max_length=100)
-    productDescription = models.TextField()
-    pictureLocation = models.TextField()
-    brand = models.CharField(max_length=50)
-    price = models.CharField(max_length=10,default="300")
-
+class Item(models.Model):
+    itemId = models.CharField(max_length=30)
+    sellerName = models.CharField(max_length=100, null=True)
+    itemDescription = models.TextField(null=True)
+    pictureLocation = models.TextField(null=True)
+    brand = models.CharField(max_length=50, null=True)
+    price = models.CharField(max_length=10, null=True)
+    title = models.CharField(max_length=100, default=None, null=True)
+    status = models.CharField(max_length=20, choices=[
+        ('Active', 'Active'),
+        ('Not Active', 'Not Active'),
+        ('Sold', 'Sold'),
+        ('Dataset', 'Dataset')
+    ],
+                              default='Active', null=True)
+    url = models.CharField(max_length=200, default=None, null=True)
+    platform = models.CharField(max_length=20, default=None, null=True)
+    dateTime = models.CharField(max_length=30, default=None, null=True)
+    
     def __str__(self):
-        return self.productId
+        return self.itemId

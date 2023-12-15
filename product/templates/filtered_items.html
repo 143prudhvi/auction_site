@@ -14,7 +14,7 @@
 <body>
     <div class="header"></div>
     <div class="main">
-        <form method="get" action="{% url 'filtered_products' %}">
+        <form method="get" action="{% url 'filtered_items' %}">
             <div class="search-container">
                 <select name="brand" id="brand">
                     <option value="">All Brands</option>
@@ -35,15 +35,15 @@
         </form>
 
         <ul>
-            {% for product in products %}
+            {% for item in items %}
                 {% comment %} Start of Product List {% endcomment %}
-                <div class="{{product.productId}} slideshow-container" data-id="{{product.productId}}">
-                    <input type="checkbox" id="{{product.productId}}_checkbox" class="product-grey-scale" onclick="toggleGrayScale('{{product.productId}}')" name="product-grey-scale-checkbox">
-                    <div class="slideshow-content" onclick="openProductModal('{{product.productId}}')">
-                        {% for key,value in product_images.items %}
-                            {% if product.productId in key %}
+                <div class="{{item.itemId}} slideshow-container" data-id="{{item.itemId}}">
+                    <input type="checkbox" id="{{item.itemId}}_checkbox" class="product-grey-scale" onclick="toggleGrayScale('{{item.itemId}}')" name="product-grey-scale-checkbox">
+                    <div class="slideshow-content" onclick="openProductModal('{{item.itemId}}')">
+                        {% for key,value in item_images.items %}
+                            {% if item.itemId in key %}
                                 {% for image_link in value %}
-                                    <div class="{{product.productId}} mySlides">
+                                    <div class="{{item.itemId}} mySlides">
                                         <img class="slideshow-img" src="{{ image_link }}" alt="Product Image">
                                     </div>
                                 {% endfor %}
@@ -53,47 +53,51 @@
                     </div>
 
                     <div class="prev-next-links">
-                        <a class="prev" onclick="plusSlides(-1, '{{product.productId}}' , 'mySlides')">&#10094;</a>
-                        <a class="next" onclick="plusSlides(1, '{{product.productId}}' , 'mySlides')">&#10095;</a>
+                        <a class="prev" onclick="plusSlides(-1, '{{item.itemId}}' , 'mySlides')">&#10094;</a>
+                        <a class="next" onclick="plusSlides(1, '{{item.itemId}}' , 'mySlides')">&#10095;</a>
                     </div>
-                    <strong class="product-id">{{product.productId}}</strong>
+                    <strong class="product-id">{{item.itemId}}</strong>
                 </div>
 
                 {% comment %} End of Product List {% endcomment %}
 
                 {% comment %} Modal Starts Here {% endcomment %}
 
-                <div class="{{product.productId}} modal">
+                <div class="{{item.itemId}} modal">
                     <div class="modal-content">
                         <div class="product-card">
-                            {% for key,value in product_images.items %}
-                                {% if product.productId in key %}
+                            {% for key,value in item_images.items %}
+                                {% if item.itemId in key %}
                                     {% for image_link in value %}
-                                        <div class="{{product.productId}} modal-image-container">
+                                        <div class="{{item.itemId}} modal-image-container">
                                             <img class="modal-img" src="{{ image_link }}" alt="Product Image">
                                         </div>
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
                             <div class="prev-next-links">
-                                <a class="prev" onclick="plusSlides(-1, '{{product.productId}}' , 'modal-image-container')">&#10094;</a>
-                                <a class="next" onclick="plusSlides(1, '{{product.productId}}' , 'modal-image-container')">&#10095;</a>
+                                <a class="prev" onclick="plusSlides(-1, '{{item.itemId}}' , 'modal-image-container')">&#10094;</a>
+                                <a class="next" onclick="plusSlides(1, '{{item.itemId}}' , 'modal-image-container')">&#10095;</a>
                             </div>
                         </div>
                         <div class="product-details">
                             <div class="modal-product-id">
                                 <label class="detail-label">Product Id</label> 
-                                <span>{{product.productId}}</span>
+                                <span>{{item.itemId}}</span>
+                            </div>
+                            <div class="product-title">
+                                <label class="detail-label">Title</label> 
+                                <span>{{item.title}}</span>
                             </div>
                             <div class="product-price">
                                 <label class="detail-label">Price</label> 
-                                <span>${{product.price}}</span>
+                                <span>{{item.price}}</span>
                             </div>
                             <div class="product-description">
                                 <label class="detail-label">Features</label>
                                 <ol class="product-description-list">
-                                    {% for key,value in product_descriptions.items %}
-                                        {% if product.productId in key %}
+                                    {% for key,value in item_descriptions.items %}
+                                        {% if item.itemId in key %}
                                             {% for feature in value %}
                                                 <li>{{feature}}</li>
                                             {% endfor %}
@@ -103,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="close-btn" onclick="closeProductModal('{{product.productId}}')" >
+                    <div class="close-btn" onclick="closeProductModal('{{item.itemId}}')" >
                         <img class="close-img" src="static/Images/close.png" />
                     </div>
                 </div>
