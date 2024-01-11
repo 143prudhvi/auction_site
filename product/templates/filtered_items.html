@@ -16,6 +16,12 @@
     <div class="main">
         <form method="get" action="{% url 'filtered_items' %}">
             <div class="search-container">
+                <input type="text" id="search_id" name="search_id" placeholder="Enter an Id" value={{search_id}} >
+                <button type="submit">Search</button>
+            </div>
+        </form>
+        <form method="get" action="{% url 'filtered_items' %}">
+            <div class="search-container">
                 <select name="brand" id="brand">
                     <option value="">All Brands</option>
                     {% for brand in distinct_brands %}
@@ -34,7 +40,7 @@
             </div>
         </form>
 
-        <ul>
+        <ul id="items-container">
             {% for item in items %}
                 {% comment %} Start of Product List {% endcomment %}
                 <div class="{{item.itemId}} slideshow-container" data-id="{{item.itemId}}">
@@ -95,7 +101,8 @@
                             </div>
                             <div class="product-description">
                                 <label class="detail-label">Features</label>
-                                <ol class="product-description-list">
+                                <iframe src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item=110971084829" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+                                {% comment %} <ol class="product-description-list">
                                     {% for key,value in item_descriptions.items %}
                                         {% if item.itemId in key %}
                                             {% for feature in value %}
@@ -103,7 +110,7 @@
                                             {% endfor %}
                                         {% endif %}
                                     {% endfor %}
-                                </ol> 
+                                </ol>  {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -115,10 +122,64 @@
                 {% comment %} End of Modal {% endcomment %}
             {% endfor %}
         </ul>
+        <div class="load-more-container">
+            <button id="load-more" data-url="{% url 'load_more_items' %}" data-offset="36">Load More</button>
+        </div>
     </div>
     <div class="footer"></div>
     <script src="static/js/slide-show.js"></script>
     <script src="static/js/checkbox.js"></script>
     <script src="static/js/modal.js"></script>
+    <script>
+        var loading = false;
+    
+        function loadMoreItems() {
+            if (!loading) {
+                loading = true;
+                var url = document.getElementById('load-more').getAttribute('data-url');
+                var offset = document.getElementById('load-more').getAttribute('data-offset');
+    
+                fetch(url + '?offset=' + offset)
+                    .then(response => response.json())
+                    .then((data) => {
+                        itemList = ""
+                        data.items.forEach((item) => {
+                            first = true
+                            item_div = ""
+                            item_div += '<div class="' + item.fields.itemId + ' slideshow-container" data-id="'+ item.fields.itemId+ '">'
+                            item_div += '<input type="checkbox" id="'+ item.fields.itemId+ '_checkbox" class="product-grey-scale" onclick="toggleGrayScale(\'' + item.fields.itemId + '\')" name="product-grey-scale-checkbox">'
+                            item_div +=  '<div class="slideshow-content" onclick="openProductModal(\'' +  item.fields.itemId + '\')">'
+                            for(let key in data.item_images){
+                                if(item.fields.itemId == key ){
+                                    data.item_images[key].forEach((image_link) => {
+                                        if(first){
+                                            item_div += '<div class="' + item.fields.itemId + ' mySlides" style="display: block;"><img class="slideshow-img" src="'+ image_link +'" alt="Product Image"></div>'
+                                            first = false
+                                        }else{
+                                            item_div += '<div class="' + item.fields.itemId + ' mySlides" style="display: none;"><img class="slideshow-img" src="'+ image_link +'" alt="Product Image"></div>'
+                                        }
+                                    })
+                                }
+                            }
+                            item_div += '</div><div class="prev-next-links">'
+                            item_div += '<a class="prev" onclick="plusSlides(-1, \'' + item.fields.itemId + '\' , \'mySlides\')">&#10094;</a>'
+                            item_div += '<a class="next" onclick="plusSlides(1, \'' + item.fields.itemId + '\' , \'mySlides\')">&#10095;</a></div>'
+                            item_div += '<strong class="product-id">' + item.fields.itemId + '</strong></div>'
+                            itemList += item_div
+                        })
+                        var itemsContainer = document.getElementById('items-container');
+                        itemsContainer.innerHTML += itemList
+                        document.getElementById('load-more').setAttribute('data-offset', parseInt(offset) + 24);
+                        loading = false;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        loading = false;
+                    });
+            }
+        }
+    
+        document.getElementById('load-more').addEventListener('click', loadMoreItems);
+    </script>
 </body>
 </html>

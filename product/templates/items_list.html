@@ -1,0 +1,83 @@
+{% for item in items %}
+    {% comment %} Start of Product List {% endcomment %}
+    <div class="{{item.itemId}} slideshow-container" data-id="{{item.itemId}}">
+        <input type="checkbox" id="{{item.itemId}}_checkbox" class="product-grey-scale" onclick="toggleGrayScale('{{item.itemId}}')" name="product-grey-scale-checkbox">
+        <div class="slideshow-content" onclick="openProductModal('{{item.itemId}}')">
+            {% for key,value in item_images.items %}
+                {% if item.itemId in key %}
+                    {% for image_link in value %}
+                        <div class="{{item.itemId}} mySlides">
+                            <img class="slideshow-img" src="{{ image_link }}" alt="Product Image">
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+            {% endfor %}
+        </div>
+
+        <div class="prev-next-links">
+            <a class="prev" onclick="plusSlides(-1, '{{item.itemId}}' , 'mySlides')">&#10094;</a>
+            <a class="next" onclick="plusSlides(1, '{{item.itemId}}' , 'mySlides')">&#10095;</a>
+        </div>
+        <strong class="product-id">{{item.itemId}}</strong>
+    </div>
+
+    {% comment %} End of Product List {% endcomment %}
+
+    {% comment %} Modal Starts Here {% endcomment %}
+
+    <div class="{{item.itemId}} modal">
+        <div class="modal-content">
+            <div class="product-card">
+                {% for key,value in item_images.items %}
+                    {% if item.itemId in key %}
+                        {% for image_link in value %}
+                            <div class="{{item.itemId}} modal-image-container">
+                                <img class="modal-img" src="{{ image_link }}" alt="Product Image">
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                <div class="prev-next-links">
+                    <a class="prev" onclick="plusSlides(-1, '{{item.itemId}}' , 'modal-image-container')">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1, '{{item.itemId}}' , 'modal-image-container')">&#10095;</a>
+                </div>
+            </div>
+            <div class="product-details">
+                <div class="modal-product-id">
+                    <label class="detail-label">Product Id</label> 
+                    <span>{{item.itemId}}</span>
+                </div>
+                <div class="product-title">
+                    <label class="detail-label">Title</label> 
+                    <span>{{item.title}}</span>
+                </div>
+                <div class="product-price">
+                    <label class="detail-label">Price</label> 
+                    <span>{{item.price}}</span>
+                </div>
+                <div class="product-description">
+                    <label class="detail-label">Features</label>
+                    <iframe src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item=110971084829" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+                    {% comment %} <ol class="product-description-list">
+                        {% for key,value in item_descriptions.items %}
+                            {% if item.itemId in key %}
+                                {% for feature in value %}
+                                    <li>{{feature}}</li>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </ol>  {% endcomment %}
+                </div>
+            </div>
+        </div>
+        <div class="close-btn" onclick="closeProductModal('{{item.itemId}}')" >
+            <img class="close-img" src="static/Images/close.png" />
+        </div>
+    </div>
+
+    {% comment %} End of Modal {% endcomment %}
+{% endfor %}
+<script src="static/js/slide-show.js"></script>
+<script src="static/js/checkbox.js"></script>
+<script src="static/js/modal.js"></script>

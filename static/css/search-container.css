@@ -10,6 +10,17 @@ select {
     width: 150px;
     font-family: 'Roboto Condensed', sans-serif;
   }
+
+  input {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+    font-size: 14px;
+    border-radius: 4px;
+    background-color: white;
+    margin-right: 10px;
+    width: 150px;
+    font-family: 'Roboto Condensed', sans-serif;
+  }
   
   /* Style the button */
   button {
