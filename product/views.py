@@ -5,22 +5,22 @@ from django.db.models import Min
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core import serializers
-# from django.core.paginator import Paginator
 
 def filtered_items(request):
     brand = request.GET.get('brand', None)
     seller = request.GET.get('seller', None)
     search_id = request.GET.get('search_id', None)
+    title_search = request.GET.get('title_search', None)
     
-    # # Pagination 
-    # page = request.GET.get('page' ,1)
-    # size = request.GET.get('size', 24)
     
     # Retriving first item 
     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
     items = Item.objects.filter(id__in=items.values('first_item_id'))
 
     # Filtering
+    if title_search:
+        items = items.filter(title__icontains=title_search)
+    
     if search_id:
         items = items.filter(itemId=search_id)
         
@@ -30,9 +30,6 @@ def filtered_items(request):
     if seller:
         items = items.filter(sellerName=seller)
     
-    # # Pagination
-    # p = Paginator(items, size)
-    # items = p.get_page(page)
     items = items[:36]
     # Images and Description
     item_images = {}
@@ -47,11 +44,12 @@ def filtered_items(request):
         'items': items,
         'distinct_brands': distinct_brands,
         'distinct_sellers': distinct_sellers,
-        'selected_brand': brand,
-        'selected_seller': seller ,
+        'selected_brand': brand if brand else "",
+        'selected_seller': seller if seller else "",
         'item_images': item_images,
         'item_descriptions': item_descriptions,
-        'search_id' : search_id if search_id else ""
+        'search_id' : search_id if search_id else "",
+        'title_search' : title_search if title_search else ""
     }
 
     return render(request, 'filtered_items.html', context)
@@ -65,12 +63,16 @@ def load_items(request):
     brand = request.GET.get('brand', None)
     seller = request.GET.get('seller', None)
     search_id = request.GET.get('search_id', None)
+    title_search = request.GET.get('title_search', None)
     
     # Retriving first item 
     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
     items = Item.objects.filter(id__in=items.values('first_item_id'))
 
     # Filtering
+    if title_search:
+        items = items.filter(title__icontains=title_search)
+        
     if search_id:
         items = items.filter(itemId=search_id)
         
@@ -86,9 +88,6 @@ def load_items(request):
     item_descriptions = {}
     for item in items:
         item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId)
-        # item_descriptions[item.itemId] = [feature for feature in item.itemDescription.split("\n") if feature]
-    distinct_brands = Item.objects.values_list('brand', flat=True).order_by('brand').distinct()
-    distinct_sellers = Item.objects.values_list('sellerName', flat=True).order_by('sellerName').distinct()
     serialized_data = serializers.serialize("json", items)
     serialized_data = json.loads(serialized_data)
     serialized_data 
