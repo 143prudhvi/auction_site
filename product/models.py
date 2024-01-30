@@ -20,6 +20,11 @@ class Item(models.Model):
     url = models.CharField(max_length=200, default=None, null=True)
     platform = models.CharField(max_length=20, default=None, null=True)
     dateTime = models.CharField(max_length=30, default=None, null=True)
-    
+    isMatched = models.BooleanField(default=0)
+    matchedCount = models.IntegerField(default=0, null=True)
     def __str__(self):
         return self.itemId
+
+class MatchItems(models.Model):
+    itemId = models.CharField(max_length=30, default=None, null=True)
+    matchedId = models.CharField(max_length=30, default=None, null=True)

@@ -3,11 +3,11 @@ function toggleGrayScale(productId){
     var products = document.getElementsByClassName(productId + " slideshow-container")
     if (checkbox.checked) {
         for(var i=0; i<products.length; i++){
-            products[i].style.filter = "opacity(30%)"
+            products[i].style.opacity = 0.3
         }
     } else {
         for(var i=0; i<products.length; i++){
-            products[i].style.filter = "none"
+            products[i].style.opacity = 1
         }
     }
 }

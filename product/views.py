@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from .models import Item
+from .models import Item, MatchItems
 import os, json
 from django.db.models import Min
 from django.http import JsonResponse
-from django.template.loader import render_to_string
 from django.core import serializers
 
 def filtered_items(request):
@@ -55,6 +54,9 @@ def filtered_items(request):
     return render(request, 'filtered_items.html', context)
 
 def get_images_from_path(folder_path : str):
+    if not os.path.exists(folder_path):
+        folder_path = "static/Images/dummy"
+        
     file_list = [folder_path + "/" + f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     return file_list
 
@@ -98,3 +100,74 @@ def load_items(request):
     }
     # html = render_to_string('items_list.html', context)
     return JsonResponse(context)
+
+def saveMatchedItems(request):
+    itemId = request.GET.get('itemId')
+    matchedId : str = request.GET.get('matchedId')
+    matchedItems = MatchItems.objects.filter(itemId=itemId)
+    retrivedMatchedIds = [obj.matchedId for obj in matchedItems ]
+    matchedIdsList = matchedId.split(",")
+    matchedIdsListCopy = matchedIdsList.copy()
+    if matchedId:  
+        for id in matchedIdsListCopy:
+            if id not in retrivedMatchedIds:
+                MatchItems.objects.create(itemId=itemId, matchedId=id)
+                MatchItems.objects.create(itemId=id, matchedId=itemId)
+                updateMatchedItemCount(itemId=itemId,matchedId=id, count=1)
+            else:
+                matchedIdsList.remove(id)
+                retrivedMatchedIds.remove(id)
+        for id in retrivedMatchedIds:
+            MatchItems.objects.filter(itemId=itemId, matchedId=id).delete()
+            MatchItems.objects.filter(itemId=id, matchedId=itemId).delete()
+            updateMatchedItemCount(itemId=itemId,matchedId=id, count=-1)
+        updateisMatched(idsList=matchedIdsListCopy + [itemId])
+        return JsonResponse({
+            "status" : "success",
+            "message" : "Saved matched Items Successfully"
+        })
+    else:
+        for id in retrivedMatchedIds:
+            MatchItems.objects.filter(itemId=itemId, matchedId=id).delete()
+            MatchItems.objects.filter(itemId=id, matchedId=itemId).delete()
+            updateMatchedItemCount(itemId=itemId,matchedId=id, count=-1)
+        updateisMatched(idsList=matchedIdsListCopy + [itemId])
+        return JsonResponse({
+            "status" : "success",
+            "message" : "Cleared Matching Successfully"
+        })
+    
+        
+def getMatchedItems(request):
+    itemId = request.GET.get('itemId')
+    items = MatchItems.objects.filter(itemId=itemId)
+    if items.exists():     
+        retrivedMatchedIds = [obj.matchedId for obj in items ]
+        return JsonResponse({
+            "status" : "success",
+            "numberOfRecords" : len(retrivedMatchedIds),
+            "message" : "Retrived matched Ids Successfully",
+            "matchedIds" : ",".join(retrivedMatchedIds)
+        })
+    else:
+        return JsonResponse({
+            "status" : "success",
+            "numberOfRecords" : 0,
+            "message" : "No matched Items found for Id " + itemId
+        })
+
+def updateMatchedItemCount(itemId, matchedId, count):
+        items = Item.objects.filter(itemId=itemId)
+        items.update(matchedCount=items[0].matchedCount + count)
+        
+        matchedItems = Item.objects.filter(itemId=matchedId)
+        matchedItems.update(matchedCount=matchedItems[0].matchedCount + count)
+
+def updateisMatched(idsList : list):
+    for id in idsList:
+        items = MatchItems.objects.filter(itemId=id)
+        if len(items):
+            Item.objects.filter(itemId=id).update(isMatched=1)
+        else:
+            Item.objects.filter(itemId=id).update(isMatched=0)
+        
