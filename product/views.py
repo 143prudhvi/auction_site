@@ -10,7 +10,7 @@ def filtered_items(request):
     seller = request.GET.get('seller', None)
     search_id = request.GET.get('search_id', None)
     title_search = request.GET.get('title_search', None)
-    
+    platform = request.GET.get('platform', None)
     
     # Retriving first item 
     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
@@ -29,6 +29,11 @@ def filtered_items(request):
     if seller:
         items = items.filter(sellerName=seller)
     
+    if platform:
+        items = items.filter(platform=platform)
+        
+    
+    
     items = items[:36]
     # Images and Description
     item_images = {}
@@ -43,6 +48,7 @@ def filtered_items(request):
         'items': items,
         'distinct_brands': distinct_brands,
         'distinct_sellers': distinct_sellers,
+        'selected_platform' : platform if platform else "",
         'selected_brand': brand if brand else "",
         'selected_seller': seller if seller else "",
         'item_images': item_images,
@@ -66,6 +72,7 @@ def load_items(request):
     seller = request.GET.get('seller', None)
     search_id = request.GET.get('search_id', None)
     title_search = request.GET.get('title_search', None)
+    platform = request.GET.get('platform', None)
     
     # Retriving first item 
     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
@@ -83,6 +90,9 @@ def load_items(request):
     
     if seller:
         items = items.filter(sellerName=seller)
+    
+    if platform:
+        items = items.filter(platform=platform)
 
     items = items[offset:offset+24]
     

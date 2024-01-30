@@ -30,6 +30,11 @@
         </form>
         <form method="get" action="{% url 'filtered_items' %}">
             <div class="search-container">
+                <select name="platform" id="platform">
+                    <option value="Poshmark" {% if selected_platform == "Poshmark" %}selected{% endif %}>Poshmark</option>
+                    <option value="eBay" {% if selected_platform == "eBay" %}selected{% endif %}>eBay</option>
+                </select>
+
                 <select name="brand" id="brand">
                     <option value="">All Brands</option>
                     {% for brand in distinct_brands %}
@@ -152,7 +157,7 @@
             {% endfor %}
         </ul>
         <div class="load-more-container">
-            <button id="load-more" data-url="{% url 'load_more_items' %}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-offset="36">Load More</button>
+            <button id="load-more" data-url="{% url 'load_more_items' %}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36">Load More</button>
         </div>
     </div>
     <div class="footer"></div>
@@ -170,12 +175,13 @@
                 loading = true;
                 var url = document.getElementById('load-more').getAttribute('data-url');
                 var offset = document.getElementById('load-more').getAttribute('data-offset');
+                var selectedPlatform = document.getElementById('load-more').getAttribute('data-selected-platform');
                 var selectedBrand = document.getElementById('load-more').getAttribute('data-selected-brand');
                 var selectedSeller = document.getElementById('load-more').getAttribute('data-selected-seller');
                 var titleSearch = document.getElementById('load-more').getAttribute('data-title-search');
 
     
-                fetch(url + '?offset=' + offset + '&brand=' + selectedBrand + '&seller=' + selectedSeller + '&title_search=' + titleSearch)
+                fetch(url + '?offset=' + offset + '&brand=' + selectedBrand + '&seller=' + selectedSeller + '&title_search=' + titleSearch + '&platform=' + selectedPlatform)
                     .then(response => response.json())
                     .then((data) => {
                         itemList = ""
