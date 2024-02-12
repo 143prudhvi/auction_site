@@ -22,6 +22,7 @@ class Item(models.Model):
     dateTime = models.CharField(max_length=30, default=None, null=True)
     isMatched = models.BooleanField(default=0)
     matchedCount = models.IntegerField(default=0, null=True)
+    imageExist = models.BooleanField(default=0)
     def __str__(self):
         return self.itemId
 

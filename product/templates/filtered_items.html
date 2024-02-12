@@ -49,6 +49,11 @@
                     {% endfor %}
                 </select>
 
+                <div class="checkbox-container">
+                    <input type="checkbox" name="image_exist" id="image_exist" {% if image_exist %}checked{% endif %}>
+                    {% comment %} <label for="image_exist">Image Exist</label> {% endcomment %}
+                </div>
+
                 <button type="submit">Apply Filters</button>
             </div>
         </form>
@@ -167,159 +172,7 @@
     <script src="static/js/slide-show.js"></script>
     <script src="static/js/checkbox.js"></script>
     <script src="static/js/modal.js"></script>
-    <script>
-        var loading = false;
-    
-        function loadMoreItems() {
-            if (!loading) {
-                loading = true;
-                var url = document.getElementById('load-more').getAttribute('data-url');
-                var offset = document.getElementById('load-more').getAttribute('data-offset');
-                var selectedPlatform = document.getElementById('load-more').getAttribute('data-selected-platform');
-                var selectedBrand = document.getElementById('load-more').getAttribute('data-selected-brand');
-                var selectedSeller = document.getElementById('load-more').getAttribute('data-selected-seller');
-                var titleSearch = document.getElementById('load-more').getAttribute('data-title-search');
-
-    
-                fetch(url + '?offset=' + offset + '&brand=' + selectedBrand + '&seller=' + selectedSeller + '&title_search=' + titleSearch + '&platform=' + selectedPlatform)
-                    .then(response => response.json())
-                    .then((data) => {
-                        itemList = ""
-                        data.items.forEach((item) => {
-                            first = true
-                            modalFirst = true
-                            item_div = ""
-                            item_div += '<div class="' + item.fields.itemId + ' slideshow-container" data-id="'+ item.fields.itemId+ '">'
-                            item_div += '<input type="checkbox" id="'+ item.fields.itemId+ '_checkbox" class="product-grey-scale" onclick="toggleGrayScale(\'' + item.fields.itemId + '\')" name="product-grey-scale-checkbox">'
-                            item_div +=  '<div class="slideshow-content" onclick="openProductModal(\'' +  item.fields.itemId + '\')">'
-                            for(let key in data.item_images){
-                                if(item.fields.itemId == key ){
-                                    data.item_images[key].forEach((image_link) => {
-                                        if(first){
-                                            item_div += '<div class="' + item.fields.itemId + ' mySlides" style="display: block;"><img class="slideshow-img" src="'+ image_link +'" alt="Product Image"></div>'
-                                            first = false
-                                        }else{
-                                            item_div += '<div class="' + item.fields.itemId + ' mySlides" style="display: none;"><img class="slideshow-img" src="'+ image_link +'" alt="Product Image"></div>'
-                                        }
-                                    })
-                                }
-                            }
-                            item_div += '</div><div class="prev-next-links">'
-                            item_div += '<a class="prev" onclick="plusSlides(-1, \'' + item.fields.itemId + '\' , \'mySlides\')">&#10094;</a>'
-                            item_div += '<a class="next" onclick="plusSlides(1, \'' + item.fields.itemId + '\' , \'mySlides\')">&#10095;</a></div>'
-                            item_div += '<strong class="product-id">' + item.fields.itemId + '</strong></div>'
-                            item_div += '<div class="' + item.fields.itemId +' modal"><div class="modal-content"><div class="product-card">'
-                            for(let key in data.item_images){
-                                if(item.fields.itemId == key ){
-                                    data.item_images[key].forEach((image_link) => {
-                                        if(modalFirst){
-                                            item_div += '<div class="' + item.fields.itemId + ' modal-image-container" style="display: block;"><img class="modal-img" src="'+ image_link +'" alt="Product Image"></div>'
-                                            modalFirst = false
-                                        }else{
-                                            item_div += '<div class="' + item.fields.itemId + ' modal-image-container" style="display: none;"><img class="modal-img" src="'+ image_link +'" alt="Product Image"></div>'
-                                        }
-                                    })
-                                }
-                            }
-                                        
-                            item_div += '<div class="prev-next-links">'
-                            item_div += '<a class="prev" onclick="plusSlides(-1, \'' + item.fields.itemId + '\' , \'modal-image-container\')">&#10094;</a>'
-                            item_div += '<a class="next" onclick="plusSlides(1, \'' + item.fields.itemId + '\' , \'modal-image-container\')">&#10095;</a></div></div>'
-                            item_div += '<div class="product-details"><div class="modal-product-id"><label class="detail-label">Product Id</label> <span>' + item.fields.itemId + '</span></div>'
-                            item_div += '<div class="product-title"><label class="detail-label">Title</label> <span>' + item.fields.title + '</span></div>'
-                            item_div += '<div class="product-seller"><label class="detail-label">Seller</label> <span>' + item.fields.sellerName + '</span></div>'
-                            item_div += '<div class="product-brand"><label class="detail-label">Brand</label> <span>' + item.fields.brand + '</span></div>'
-                            item_div += '<div class="product-price"><label class="detail-label">Price</label> <span>' + item.fields.price + '</span></div>'
-                            item_div += '<div class="product-description"><label class="detail-label">Features</label>'
-                            item_div += '<iframe src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item=110971084829" width="100%" height="400" frameborder="0" allowfullscreen></iframe></div></div></div>'
-                            item_div += '<div class="close-btn" onclick="closeProductModal(\'' + item.fields.itemId + '\')" ><img class="close-img" src="static/Images/close.png" /></div></div>'
-                            itemList += item_div
-                        })
-                        var itemsContainer = document.getElementById('items-container');
-                        itemsContainer.innerHTML += itemList
-                        document.getElementById('load-more').setAttribute('data-offset', parseInt(offset) + 24);
-                        loading = false;
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        loading = false;
-                    });
-            }
-        }
-    
-        document.getElementById('load-more').addEventListener('click', loadMoreItems);
-    </script>
-
-    <script>
-        function showStatusMessage(message, className) {
-            const statusBar = document.getElementById('statusBar');
-        
-            // Set the message and class
-            statusBar.textContent = message;
-            statusBar.className = className;
-        
-            // Show the status bar
-            statusBar.classList.remove('hidden');
-        
-            // Hide the status bar after a certain duration (e.g., 5 seconds)
-            setTimeout(() => {
-                statusBar.classList.add('hidden');
-            }, 5000);
-        }
-        
-        function matchAction(itemId){
-            var inputBox = document.getElementById(itemId + '_matchInput');
-            var matchButton = document.getElementById(itemId + '_matchButton');
-            if (inputBox.disabled) {
-                inputBox.disabled = false;
-                matchButton.innerHTML = 'Save';
-            } else {
-                inputBox.disabled = true;
-                matchButton.innerHTML = 'Edit';
-                url = matchButton.getAttribute('data-url');
-                matchedId = inputBox.value;
-                const statusBar = document.getElementById('statusBar');
-
-                fetch(url + '?itemId=' + itemId + '&matchedId=' + matchedId)
-                .then(response => response.json())
-                .then((data) => {
-                    setTimeout(() => {
-                        showStatusMessage(data.message, data.status);
-                    }, 2000);
-                })
-                .catch((error) => {
-                    setTimeout(() => {
-                        showStatusMessage("Something Went Wrong", "error");
-                    }, 2000);
-                })
-            }
-        }
-    </script>
-    <script>
-        function getMatchedIds(itemId, url){
-            var inputBox = document.getElementById(itemId + '_matchInput');
-            var matchButton = document.getElementById(itemId + '_matchButton');
-            fetch(url + '?itemId=' + itemId )
-            .then(response => response.json())
-            .then((data) => {
-                if(data.status == "success" && data.numberOfRecords){
-                    inputBox.disabled = true;
-                    matchButton.innerHTML = 'Edit';
-                    inputBox.value = data.matchedIds
-                }else if(data.status == "success" && !data.numberOfRecords){
-                    inputBox.value = ""
-                    matchButton.innerHTML = 'Save';
-                    inputBox.disabled = false;
-                }else{
-
-                }
-            })
-            .catch((error) => {
-                setTimeout(() => {
-                    showStatusMessage("Something Went Wrong", "error");
-                }, 2000);
-            })
-        }
-    </script>
+    <script src="static/js/loadItems.js"></script>
+    <script src="static/js/matchItems.js"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@ def filtered_items(request):
     search_id = request.GET.get('search_id', None)
     title_search = request.GET.get('title_search', None)
     platform = request.GET.get('platform', None)
+    image_exist = request.GET.get('image_exist', None)
     
     # Retriving first item 
     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
@@ -31,7 +32,9 @@ def filtered_items(request):
     
     if platform:
         items = items.filter(platform=platform)
-        
+    
+    if image_exist:
+        items = items.filter(imageExist=True)
     
     
     items = items[:36]
@@ -54,7 +57,8 @@ def filtered_items(request):
         'item_images': item_images,
         'item_descriptions': item_descriptions,
         'search_id' : search_id if search_id else "",
-        'title_search' : title_search if title_search else ""
+        'title_search' : title_search if title_search else "",
+        'image_exist' : True if image_exist else False
     }
 
     return render(request, 'filtered_items.html', context)
