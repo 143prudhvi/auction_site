@@ -18,18 +18,6 @@
     <div class="main">
         <form method="get" action="{% url 'filtered_items' %}">
             <div class="search-container">
-                <input type="text" id="search_id" name="search_id" placeholder="Enter an Id" value={{search_id}} >
-                <button type="submit">Search</button>
-            </div>
-        </form>
-        <form method="get" action="{% url 'filtered_items' %}">
-            <div class="search-container">
-                <input type="text" id="title_search" name="title_search" placeholder="Enter Title" value={{title_search}} >
-                <button type="submit">Search</button>
-            </div>
-        </form>
-        <form method="get" action="{% url 'filtered_items' %}">
-            <div class="search-container">
                 <select name="platform" id="platform">
                     <option value="Poshmark" {% if selected_platform == "Poshmark" %}selected{% endif %}>Poshmark</option>
                     <option value="eBay" {% if selected_platform == "eBay" %}selected{% endif %}>eBay</option>
@@ -48,6 +36,14 @@
                         <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
                     {% endfor %}
                 </select>
+
+                <div class="search_id">
+                    <input type="text" id="search_id" name="search_id" placeholder="Enter an Id" value={{search_id}} >
+                </div>
+
+                <div class="title_search">
+                    <input type="text" id="title_search" name="title_search" placeholder="Enter Title" value={{title_search}} >
+                </div>
 
                 <div class="checkbox-container">
                     <input type="checkbox" name="image_exist" id="image_exist" {% if image_exist %}checked{% endif %}>
@@ -112,14 +108,7 @@
                             </div>
                             <div class="modal-match-itemid">
                                 <label class="detail-label">Matched Items <strong style="font-size:16px;">{{item.matchedCount}}</strong></label>
-                                {% for key,value in matchingIds %}
-                                    {% if item.itemId in key %}
-                                        {% for matchedId in value %}
-                                            <span>{{matchedId}}</span>
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endfor %}
-                                <textarea rows="4" cols="30" placeholder="Matched Item Id" id="{{item.itemId}}_matchInput" {% if item.matchedCount %}value="{{item.matchedCount}}" width disabled{% endif %} ></textarea>
+                                <textarea rows="4" cols="30" placeholder="Matched Item Id" id="{{item.itemId}}_matchInput" {% if item.matchedCount %}disabled{% endif %} ></textarea>
                                 <button id="{{item.itemId}}_matchButton" data-url="{% url 'save_matched_items' %}" onclick="matchAction('{{item.itemId}}')">{% if item.matchedCount %}Edit{% else %}Save{% endif %}</button>
                             </div>
                             <div class="product-title">
@@ -140,16 +129,13 @@
                             </div>
                             <div class="product-description">
                                 <label class="detail-label">Features</label>
-                                <iframe {% if item.platform == "eBay" %} src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item={{item.itemId}}" {% else %} src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item=110971084829" {% endif %}  width="100%" height="300" frameborder="0" allowfullscreen></iframe>
-                                {% comment %} <ol class="product-description-list">
-                                    {% for key,value in item_descriptions.items %}
-                                        {% if item.itemId in key %}
-                                            {% for feature in value %}
-                                                <li>{{feature}}</li>
-                                            {% endfor %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </ol>  {% endcomment %}
+                                {% if item.platform == "eBay" %}
+                                    <iframe src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item={{item.itemId}}" width="100%" height="300" frameborder="0" allowfullscreen></iframe>
+                                {% else %}
+                                    <div class="product-description-list">
+                                        {{item.itemDescription}}
+                                    </div>  
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -162,7 +148,7 @@
             {% endfor %}
         </ul>
         <div class="load-more-container">
-            <button id="load-more" data-url="{% url 'load_more_items' %}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36">Load More</button>
+            <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36">Load More</button>
         </div>
     </div>
     <div class="footer"></div>

@@ -77,6 +77,7 @@ def load_items(request):
     search_id = request.GET.get('search_id', None)
     title_search = request.GET.get('title_search', None)
     platform = request.GET.get('platform', None)
+    image_exist = request.GET.get('image_exist', None)
     
     # Retriving first item 
     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
@@ -97,6 +98,9 @@ def load_items(request):
     
     if platform:
         items = items.filter(platform=platform)
+    
+    if image_exist:
+        items = items.filter(imageExist=True)
 
     items = items[offset:offset+24]
     
