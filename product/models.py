@@ -23,6 +23,8 @@ class Item(models.Model):
     isMatched = models.BooleanField(default=0)
     matchedCount = models.IntegerField(default=0, null=True)
     imageExist = models.BooleanField(default=0)
+    isGrouped = models.BooleanField(default=0)
+    groupId = models.CharField(max_length=40, default=None, null=True)
     def __str__(self):
         return self.itemId
 

@@ -4,13 +4,14 @@ import os, json
 from django.db.models import Min
 from django.http import JsonResponse
 from django.core import serializers
+import uuid
 
 def filtered_items(request):
     brand = request.GET.get('brand', None)
     seller = request.GET.get('seller', None)
     search_id = request.GET.get('search_id', None)
     title_search = request.GET.get('title_search', None)
-    platform = request.GET.get('platform', None)
+    platform = request.GET.get('platform', "Poshmark")
     image_exist = request.GET.get('image_exist', None)
     
     # Retriving first item 
@@ -67,7 +68,7 @@ def get_images_from_path(folder_path : str):
     if not os.path.exists(folder_path):
         folder_path = "static/Images/dummy"
         
-    file_list = [folder_path + "/" + f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    file_list = ["/" + folder_path + "/" + f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     return file_list
 
 def load_items(request):
@@ -188,4 +189,74 @@ def updateisMatched(idsList : list):
             Item.objects.filter(itemId=id).update(isMatched=1)
         else:
             Item.objects.filter(itemId=id).update(isMatched=0)
-        
+
+def groupItems(request):
+    groupedIds = request.GET.get('groupedIds')
+    nonGroupedIds = request.GET.get('nonGroupedIds')
+    
+    groupedIdList = groupedIds.split(",")
+    nonGroupedIdList = nonGroupedIds.split(",")
+    
+    if(not groupedIds):
+        groupId = uuid.uuid4()
+        for itemId in nonGroupedIdList:
+            Item.objects.filter(itemId=itemId).update(isGrouped=1,groupId=groupId)
+    else:
+        items = Item.objects.filter(itemId=groupedIdList[0])
+        groupId = items[0].groupId
+        if(len(groupedIdList) > 1):
+            for itemId in groupedIdList[1:]:
+                Item.objects.filter(itemId=itemId).update(groupId=groupId)
+        for itemId in nonGroupedIdList:
+            Item.objects.filter(itemId=itemId).update(isGrouped=1,groupId=groupId)
+    return JsonResponse({
+            "status" : "success",
+            "message" : "Grouped Items Successfully!!"
+        })
+    
+def removeGroupItems(request):
+    itemIds = request.GET.get('itemIds')
+    for itemId in itemIds.split(","):
+        Item.objects.filter(itemId=itemId).update(isGrouped=0,groupId="")
+    return JsonResponse({
+            "status" : "success",
+            "message" : "Removed Items Successfully from Group!!"
+        })
+
+def addGroupItem(request):
+    itemId = request.GET.get('itemId')
+    groupId = request.GET.get('groupId')
+    
+    items = Item.objects.filter(itemId=itemId)
+    if len(items):
+        items.update(groupId=groupId)
+        return JsonResponse({
+            "status" : "success",
+            "message" : "Added Item Successfully to the Group!!"
+        })
+    else:
+        return JsonResponse({
+            "status" : "error",
+            "message" : "No Item found with Id : " + itemId
+        })
+
+def get_group_page(request, id):
+    
+    # Retriving first item 
+    items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
+    items = Item.objects.filter(id__in=items.values('first_item_id'))
+
+    items = items.filter(groupId=id)
+    
+    # Images and Description
+    item_images = {}
+    for item in items:
+        item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId)
+    
+    context = {
+        'items': items,
+        'item_images': item_images,
+        'group_id' : id
+    }
+
+    return render(request, 'group_page.html', context)
