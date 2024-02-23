@@ -18,44 +18,49 @@
 <body>
     <div class="header"></div>
     <div class="main">
-        <form method="get" action="{% url 'filtered_items' %}">
-            <div class="search-container">
-                <select name="platform" id="platform">
-                    <option value="Poshmark" {% if selected_platform == "Poshmark" %}selected{% endif %}>Poshmark</option>
-                    <option value="eBay" {% if selected_platform == "eBay" %}selected{% endif %}>eBay</option>
-                </select>
+        <div class="form-container">
+            <form method="get" action="{% url 'filtered_items' %}">
+                <div class="search-container">
+                    <select name="platform" id="platform">
+                        <option value="Poshmark" {% if selected_platform == "Poshmark" %}selected{% endif %}>Poshmark</option>
+                        <option value="eBay" {% if selected_platform == "eBay" %}selected{% endif %}>eBay</option>
+                    </select>
 
-                <select name="brand" id="brand">
-                    <option value="">All Brands</option>
-                    {% for brand in distinct_brands %}
-                        <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>{{ brand }}</option>
-                    {% endfor %}
-                </select>
-                
-                <select name="seller" id="seller">
-                    <option value="">All Sellers</option>
-                    {% for seller in distinct_sellers %}
-                        <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
-                    {% endfor %}
-                </select>
+                    <select name="brand" id="brand">
+                        <option value="">All Brands</option>
+                        {% for brand in distinct_brands %}
+                            <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>{{ brand }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <select name="seller" id="seller">
+                        <option value="">All Sellers</option>
+                        {% for seller in distinct_sellers %}
+                            <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
+                        {% endfor %}
+                    </select>
 
-                <div class="search_id">
-                    <input type="text" id="search_id" name="search_id" placeholder="Enter an Id" value="{{search_id}}" >
+                    <div class="search_id">
+                        <input type="text" id="search_id" name="search_id" placeholder="Enter an Id" value="{{search_id}}" >
+                    </div>
+
+                    <div class="title_search">
+                        <input type="text" id="title_search" name="title_search" placeholder="Enter Title" value="{{title_search}}" >
+                    </div>
+
+                    <label class="checkbox-container checkbox-label">Image Exist
+                        <input type="checkbox" name="image_exist" id="image_exist" {% if image_exist %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                    </label>
+                    
+                    <label class="checkbox-container checkbox-label">Duplicate Group
+                        <input type="checkbox" name="duplicate_group" id="duplicate_group" {% if duplicate_group %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                    </label>
+                    <button type="submit">Filter</button>
                 </div>
-
-                <div class="title_search">
-                    <input type="text" id="title_search" name="title_search" placeholder="Enter Title" value="{{title_search}}" >
-                </div>
-
-                <div class="checkbox-container">
-                    <input type="checkbox" name="image_exist" id="image_exist" {% if image_exist %}checked{% endif %}>
-                    {% comment %} <label for="image_exist">Image Exist</label> {% endcomment %}
-                </div>
-
-                <button type="submit">Filter</button>
-            </div>
-        </form>
-
+            </form>
+        </div>
         <ul id="items-container">
             {% for item in items %}
                 {% comment %} Start of Product List {% endcomment %}
@@ -151,7 +156,7 @@
             {% endfor %}
         </ul>
         <div class="load-more-container">
-            <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36">Load More</button>
+            <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-duplicate-group="{{duplicate_group}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36">Load More</button>
         </div>
         <div class="group-items-container">
             <button id="group-items" style="

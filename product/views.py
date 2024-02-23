@@ -13,11 +13,15 @@ def filtered_items(request):
     title_search = request.GET.get('title_search', None)
     platform = request.GET.get('platform', "Poshmark")
     image_exist = request.GET.get('image_exist', None)
+    duplicate_group = request.GET.get('duplicate_group', None)
     
-    # Retriving first item 
-    items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
-    items = Item.objects.filter(id__in=items.values('first_item_id'))
+    
+    # Get all items with their corresponding minimum id
+    items_with_min_ids = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
 
+    # Filter items to include only those with minimum ids
+    items = Item.objects.filter(id__in=items_with_min_ids.values('first_item_id'))
+        
     # Filtering
     if title_search:
         items = items.filter(title__icontains=title_search)
@@ -37,6 +41,11 @@ def filtered_items(request):
     if image_exist:
         items = items.filter(imageExist=True)
     
+    if duplicate_group:
+        unique_group_ids = items.values('groupId').annotate(first_group_id=Min('id'))
+        items_with_unique_groups = items.filter(id__in=unique_group_ids.values('first_group_id'))
+        items_with_null_group_ids = items.filter(groupId__isnull=True)
+        items = items_with_unique_groups | items_with_null_group_ids
     
     items = items[:36]
     # Images and Description
@@ -59,7 +68,8 @@ def filtered_items(request):
         'item_descriptions': item_descriptions,
         'search_id' : search_id if search_id else "",
         'title_search' : title_search if title_search else "",
-        'image_exist' : True if image_exist else False
+        'image_exist' : True if image_exist else False,
+        'duplicate_group' : True if duplicate_group else False
     }
 
     return render(request, 'filtered_items.html', context)
@@ -79,11 +89,16 @@ def load_items(request):
     title_search = request.GET.get('title_search', None)
     platform = request.GET.get('platform', None)
     image_exist = request.GET.get('image_exist', None)
-    
+    duplicate_group = request.GET.get('duplicate_group', None)
+
     # Retriving first item 
     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
     items = Item.objects.filter(id__in=items.values('first_item_id'))
-
+    if duplicate_group:
+        unique_group_ids = items.values('groupId').annotate(first_group_id=Min('id'))
+        items_with_unique_groups = items.filter(id__in=unique_group_ids.values('first_group_id'))
+        items_with_null_group_ids = items.filter(groupId__isnull=True)
+        items = items_with_unique_groups | items_with_null_group_ids
     # Filtering
     if title_search:
         items = items.filter(title__icontains=title_search)
@@ -217,7 +232,7 @@ def groupItems(request):
 def removeGroupItems(request):
     itemIds = request.GET.get('itemIds')
     for itemId in itemIds.split(","):
-        Item.objects.filter(itemId=itemId).update(isGrouped=0,groupId="")
+        Item.objects.filter(itemId=itemId).update(isGrouped=0,groupId=None)
     return JsonResponse({
             "status" : "success",
             "message" : "Removed Items Successfully from Group!!"
