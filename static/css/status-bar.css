@@ -1,0 +1,24 @@
+/* Add your styles for the status bar here */
+#statusBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    z-index: 4;
+}
+
+.success {
+    background-color: #4CAF50; /* Green */
+}
+
+.error {
+    background-color: #f44336; /* Red */
+}
+
+.hidden {
+    display: none;
+}

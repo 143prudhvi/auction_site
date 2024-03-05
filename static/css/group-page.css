@@ -1,0 +1,17 @@
+.group-title {
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  margin: 64px 0 32px 0;
+  font-size: 32px;
+}
+
+.group-items-container{
+  display: flex;
+  justify-content: right;
+  margin: 16px 64px 16px 0;
+}
+
+.group-items-container button{
+  margin-left: 24px;
+}

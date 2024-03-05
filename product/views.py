@@ -27,7 +27,7 @@ def filtered_items(request):
         items = items.filter(title__icontains=title_search)
     
     if search_id:
-        items = items.filter(itemId=search_id)
+        items = items.filter(itemId__in=search_id.split(","))
         
     if brand:
         items = items.filter(brand=brand)
@@ -104,7 +104,7 @@ def load_items(request):
         items = items.filter(title__icontains=title_search)
         
     if search_id:
-        items = items.filter(itemId=search_id)
+        items = items.filter(itemId__in=search_id.split(","))
         
     if brand:
         items = items.filter(brand=brand)

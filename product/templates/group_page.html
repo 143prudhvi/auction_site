@@ -83,7 +83,7 @@
                             </div>
                             <div class="product-title">
                                 <label class="detail-label">Title</label> 
-                                <span>{{item.title}}</span><a href="{{item.url}}" target="_blank">Click Here</a>
+                                <span>{{item.title}}</span>
                             </div>
                             <div class="product-seller">
                                 <label class="detail-label">Seller</label> 
@@ -108,9 +108,14 @@
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    <div class="close-btn" onclick="closeProductModal('{{item.itemId}}')" >
-                        <img class="close-img" src="{% static 'Images/close.png' %}" />
+                        <div class="close-btn" onclick="closeProductModal('{{item.itemId}}')" >
+                            <img class="close-img" src="{% static 'Images/close.png' %}" />
+                        </div>
+                        <div class="navigate-to-product">
+                            <a href="{{item.url}}" target="_blank">
+                                <img class="close-img" src="{% static 'Images/website.png' %}" />
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -123,7 +128,8 @@
                 <button id="add-group-items"  onClick="addGroupItem()">Add Item</button>
             </div>
             <div class="remove-group-items-container">
-                <button id="remove-group-items" style="background-color : red;" onClick="removeGroupItems()">Remove Items</button>
+                <span style="font-size:12px;  margin-top: 24px;display:block;">Check any item and click remove</span>
+                <button id="remove-group-items" style="background-color : red;  margin-top: 4px;" onClick="removeGroupItems()">Remove Items</button>
             </div>
         </div>
     </div>

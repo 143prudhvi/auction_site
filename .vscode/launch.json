@@ -5,8 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Collect Static",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\manage.py",
+            "args": [
+                "collectstatic"
+            ],
+            "django": true
+        },
+        {
             "name": "Python: Django",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}\\manage.py",
             "args": [

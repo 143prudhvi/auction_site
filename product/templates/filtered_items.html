@@ -41,7 +41,7 @@
                     </select>
 
                     <div class="search_id">
-                        <input type="text" id="search_id" name="search_id" placeholder="Enter an Id" value="{{search_id}}" >
+                        <textarea id="search_id" name="search_id" placeholder="Enter Item Ids to search" rows="4">{{search_id}}</textarea>
                     </div>
 
                     <div class="title_search">
@@ -60,6 +60,10 @@
                     <button type="submit">Filter</button>
                 </div>
             </form>
+            <div class="group-items-container" style="width:100%">
+                <span style="font-size:12px;">Check at least two items to group</span>
+                <button id="group-items" onClick="groupItems()" style="width:100%;margin-top:8px;">Group Items</button>
+            </div>
         </div>
         <ul id="items-container">
             {% for item in items %}
@@ -121,7 +125,7 @@
                             </div>
                             <div class="product-title">
                                 <label class="detail-label">Title</label> 
-                                <span>{{item.title}}</span><a href="{{item.url}}" target="_blank">Click Here</a>
+                                <span>{{item.title}}</span>
                             </div>
                             <div class="product-seller">
                                 <label class="detail-label">Seller</label> 
@@ -146,9 +150,14 @@
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    <div class="close-btn" onclick="closeProductModal('{{item.itemId}}')" >
-                        <img class="close-img" src="static/Images/close.png" />
+                        <div class="close-btn" onclick="closeProductModal('{{item.itemId}}')" >
+                            <img class="close-img" src="static/Images/close.png" />
+                        </div>
+                        <div class="navigate-to-product">
+                            <a href="{{item.url}}" target="_blank">
+                                <img class="close-img" src="static/Images/website.png" />
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -157,13 +166,6 @@
         </ul>
         <div class="load-more-container">
             <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-duplicate-group="{{duplicate_group}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36">Load More</button>
-        </div>
-        <div class="group-items-container">
-            <button id="group-items" style="
-            position: absolute;
-            top: 64px;
-            right: 32px;
-        " onClick="groupItems()">Group Items</button>
         </div>
     </div>
     <div class="footer"></div>
