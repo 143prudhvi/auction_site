@@ -26,6 +26,13 @@
                         <option value="eBay" {% if selected_platform == "eBay" %}selected{% endif %}>eBay</option>
                     </select>
 
+                    <select name="seller" id="seller">
+                        <option value="">All Sellers</option>
+                        {% for seller in distinct_sellers %}
+                            <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
+                        {% endfor %}
+                    </select>
+
                     <select name="brand" id="brand">
                         <option value="">All Brands</option>
                         {% for brand in distinct_brands %}
@@ -33,12 +40,6 @@
                         {% endfor %}
                     </select>
                     
-                    <select name="seller" id="seller">
-                        <option value="">All Sellers</option>
-                        {% for seller in distinct_sellers %}
-                            <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
-                        {% endfor %}
-                    </select>
 
                     <div class="search_id">
                         <textarea id="search_id" name="search_id" placeholder="Enter Item Ids to search" rows="4">{{search_id}}</textarea>
@@ -65,6 +66,7 @@
                 <button id="group-items" onClick="groupItems()" style="width:100%;margin-top:8px;">Group Items</button>
             </div>
         </div>
+        <div class="items_count">Number of Items : {{total_items}}</div>
         <ul id="items-container">
             {% for item in items %}
                 {% comment %} Start of Product List {% endcomment %}
@@ -165,7 +167,8 @@
             {% endfor %}
         </ul>
         <div class="load-more-container">
-            <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-duplicate-group="{{duplicate_group}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36">Load More</button>
+            {% comment %} <div class="item-count">Showing <span>36</span> out of {{total_items}}</div> {% endcomment %}
+            <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-duplicate-group="{{duplicate_group}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36" disabled>Load More</button>
         </div>
     </div>
     <div class="footer"></div>

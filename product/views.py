@@ -7,8 +7,8 @@ from django.core import serializers
 import uuid
 
 def filtered_items(request):
-    brand = request.GET.get('brand', None)
-    seller = request.GET.get('seller', None)
+    brand = request.GET.get('brand', "kate spade")
+    seller = request.GET.get('seller', "AllSeasons")
     search_id = request.GET.get('search_id', None)
     title_search = request.GET.get('title_search', None)
     platform = request.GET.get('platform', "Poshmark")
@@ -47,7 +47,9 @@ def filtered_items(request):
         items_with_null_group_ids = items.filter(groupId__isnull=True)
         items = items_with_unique_groups | items_with_null_group_ids
     
-    items = items[:36]
+    total_items = len(items)
+    
+    # items = items[:36]
     # Images and Description
     item_images = {}
     item_descriptions = {}
@@ -69,7 +71,8 @@ def filtered_items(request):
         'search_id' : search_id if search_id else "",
         'title_search' : title_search if title_search else "",
         'image_exist' : True if image_exist else False,
-        'duplicate_group' : True if duplicate_group else False
+        'duplicate_group' : True if duplicate_group else False,
+        'total_items' : total_items
     }
 
     return render(request, 'filtered_items.html', context)

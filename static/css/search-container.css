@@ -91,7 +91,6 @@ button:hover{
   display: flex;
   align-items: stretch;
   justify-content: center;
-  margin-top: 64px;
   margin-bottom: 32px;
   flex-direction: column;
 }
@@ -99,9 +98,13 @@ button:hover{
 /* Form Container */
 .form-container{
   position: fixed;
-  top: 15%;
+  top: calc( (100% - 600px) / 2);
   left: 48px;
-  max-width: 200px;
+  max-width: 15% ;
+  min-width: 200px;
+  width: 240px;
+  padding-right: 24px;
+  box-sizing: border-box;
 }
 
 form > div > * {

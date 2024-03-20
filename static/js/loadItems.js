@@ -89,7 +89,12 @@ function loadMoreItems() {
                     item_div += '<div class="product-brand"><label class="detail-label">Brand</label> <span>' + item.fields.brand + '</span></div>'
                     item_div += '<div class="product-price"><label class="detail-label">Price</label> <span>' + item.fields.price + '</span></div>'
                     item_div += '<div class="product-description"><label class="detail-label">Features</label>'
-                    item_div += '<iframe src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item=110971084829" width="100%" height="300" frameborder="0" allowfullscreen></iframe></div></div>'
+                    if(item.fields.platform == "eBay"){
+                        item_div += '<iframe src="https://vi.vipr.ebaydesc.com/ws/eBayISAPI.dll?ViewItemDescV4&item=' + item.fields.itemId + '" width="100%" height="300" frameborder="0" allowfullscreen></iframe>'
+                    }else{
+                        item_div += '<div class="product-description-list">' + item.fields.itemDescription + '</div> '
+                    }
+                    item_div += '</div></div>'
                     item_div += '<div class="close-btn" onclick="closeProductModal(\'' + item.fields.itemId + '\')" ><img class="close-img" src="static/Images/close.png" /></div><div class="navigate-to-product"><a href="' + item.fields.url + '" target="_blank"><img class="close-img" src="static/Images/website.png" /></a></div></div></div>'
                     itemList += item_div
                 })
