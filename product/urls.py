@@ -11,6 +11,8 @@ urlpatterns = [
     path('removeGroupItems', views.removeGroupItems, name="remove_group_items"),
     path("group/<str:id>/", views.get_group_page, name="get_group_page"),
     path('addGroupItem', views.addGroupItem, name='add_group_item'),
+    path('getBrands', views.get_brand_list, name='get_brands'),
+    
     
 ]
 urlpatterns += staticfiles_urlpatterns()

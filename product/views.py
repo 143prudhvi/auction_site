@@ -56,7 +56,7 @@ def filtered_items(request):
     for item in items:
         item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId)
         # item_descriptions[item.itemId] = [feature for feature in item.itemDescription.split("\n") if feature]
-    distinct_brands = Item.objects.values_list('brand', flat=True).order_by('brand').distinct()
+    distinct_brands = Item.objects.filter(platform=platform, sellerName=seller).values_list('brand', flat=True).order_by('brand').distinct()
     distinct_sellers = Item.objects.values_list('sellerName', flat=True).order_by('sellerName').distinct()
     
     context = {
@@ -278,3 +278,16 @@ def get_group_page(request, id):
     }
 
     return render(request, 'group_page.html', context)
+
+def get_brand_list(request):
+    seller = request.GET.get('seller')
+    platform = request.GET.get('platform')
+    distinct_brands = Item.objects.filter(platform=platform, sellerName=seller).values_list('brand', flat=True).order_by('brand').distinct()
+    brands = []
+    for item in distinct_brands:
+        brands.append(item)
+        
+    return JsonResponse({
+            "status" : "success",
+            "brands" : brands
+        })

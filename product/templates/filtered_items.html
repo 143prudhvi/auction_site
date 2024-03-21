@@ -27,14 +27,12 @@
                     </select>
 
                     <select name="seller" id="seller">
-                        <option value="">All Sellers</option>
                         {% for seller in distinct_sellers %}
                             <option value="{{ seller }}" {% if seller == selected_seller %}selected{% endif %}>{{ seller }}</option>
                         {% endfor %}
                     </select>
 
                     <select name="brand" id="brand">
-                        <option value="">All Brands</option>
                         {% for brand in distinct_brands %}
                             <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>{{ brand }}</option>
                         {% endfor %}
@@ -181,5 +179,29 @@
     <script src="static/js/loadItems.js"></script>
     <script src="static/js/matchItems.js"></script>
     <script src="static/js/groupItems.js"></script>
+    <script>
+        document.getElementById('seller').addEventListener('change', function() {
+            var seller = this.value;
+            var platform = document.getElementById("platform").value;
+            // Fetch URL to get brands list based on selected seller
+            var url = '/getBrands?seller=' + seller + '&platform=' + platform; // Replace this with the actual URL
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    var brandSelect = document.getElementById('brand');
+                    brandSelect.innerHTML = ''; // Clear existing options
+                    // Add new options based on the fetched data
+                    data.brands.forEach(function(brand) {
+                        var option = document.createElement('option');
+                        option.value = brand;
+                        option.textContent = brand;
+                        brandSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching brands:', error);
+                });
+        });
+        </script>
 </body>
 </html>
