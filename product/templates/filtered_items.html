@@ -69,6 +69,7 @@
             {% for item in items %}
                 {% comment %} Start of Product List {% endcomment %}
                 <div class="{{item.itemId}} slideshow-container" data-id="{{item.itemId}}" style="opacity: {% if item.matchedCount %}0.3{% else %}1.0{% endif %};">
+                    {% if item.isNewImage %}<span class="new-image">New</span>{% endif %}
                     <input type="checkbox" id="{{item.itemId}}_checkbox" data-item-id="{{item.itemId}}" data-is-grouped="{{item.isGrouped}}"  class="group-items" name="product-grey-scale-checkbox">
                     <div class="slideshow-content" id="{{item.itemId}}slideshow-content" onclick="openProductModal('{{item.itemId}}')" data-match-url="{% url 'get_matched_ids' %}">
                         {% for key,value in item_images.items %}

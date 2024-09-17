@@ -10,6 +10,12 @@
     position: relative;
 }
 
+.new-image{
+    position: absolute;
+    top: 16px;
+    left: 16px;
+}
+
 .mySlides {
     display: none;
     cursor: pointer;

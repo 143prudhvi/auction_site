@@ -39,7 +39,7 @@ def filtered_items(request):
         items = items.filter(platform=platform)
     
     if image_exist:
-        items = items.filter(imageExist=True)
+        items = items.filter(isNewImage=True)
     
     if duplicate_group:
         unique_group_ids = items.values('groupId').annotate(first_group_id=Min('id'))

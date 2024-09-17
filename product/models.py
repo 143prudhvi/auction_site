@@ -25,6 +25,9 @@ class Item(models.Model):
     imageExist = models.BooleanField(default=0)
     isGrouped = models.BooleanField(default=0)
     groupId = models.CharField(max_length=40, default=None, null=True)
+    isNewImage = models.BooleanField(default=0)
+    isNewMatch = models.BooleanField(default=0)
+    isNewGroup = models.BooleanField(default=0)
     def __str__(self):
         return self.itemId
 
