@@ -14,6 +14,7 @@ def filtered_items(request):
     platform = request.GET.get('platform', "Poshmark")
     image_exist = request.GET.get('image_exist', None)
     duplicate_group = request.GET.get('duplicate_group', None)
+    is_new_image = request.GET.get('is_new_image', None)
     
     
     # Get all items with their corresponding minimum id
@@ -39,6 +40,9 @@ def filtered_items(request):
         items = items.filter(platform=platform)
     
     if image_exist:
+        items = items.filter(imageExist=True)
+        
+    if is_new_image:
         items = items.filter(isNewImage=True)
     
     if duplicate_group:
@@ -54,7 +58,7 @@ def filtered_items(request):
     item_images = {}
     item_descriptions = {}
     for item in items:
-        item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId)
+        item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId, item.imageExist)
         # item_descriptions[item.itemId] = [feature for feature in item.itemDescription.split("\n") if feature]
     distinct_brands = Item.objects.filter(platform=platform, sellerName=seller).values_list('brand', flat=True).order_by('brand').distinct()
     distinct_sellers = Item.objects.values_list('sellerName', flat=True).order_by('sellerName').distinct()
@@ -72,71 +76,72 @@ def filtered_items(request):
         'title_search' : title_search if title_search else "",
         'image_exist' : True if image_exist else False,
         'duplicate_group' : True if duplicate_group else False,
+        'is_new_image' : True if is_new_image else False,
         'total_items' : total_items
     }
 
     return render(request, 'filtered_items.html', context)
 
-def get_images_from_path(folder_path : str):
-    if not os.path.exists(folder_path):
+def get_images_from_path(folder_path : str, imageExist: bool):
+    if not imageExist or not os.path.exists(folder_path):
         folder_path = "static/Images/dummy"
         
     file_list = ["/" + folder_path + "/" + f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     return file_list
 
-def load_items(request):
-    offset = int(request.GET.get('offset', 0))
-    brand = request.GET.get('brand', None)
-    seller = request.GET.get('seller', None)
-    search_id = request.GET.get('search_id', None)
-    title_search = request.GET.get('title_search', None)
-    platform = request.GET.get('platform', None)
-    image_exist = request.GET.get('image_exist', None)
-    duplicate_group = request.GET.get('duplicate_group', None)
+# def load_items(request):
+#     offset = int(request.GET.get('offset', 0))
+#     brand = request.GET.get('brand', None)
+#     seller = request.GET.get('seller', None)
+#     search_id = request.GET.get('search_id', None)
+#     title_search = request.GET.get('title_search', None)
+#     platform = request.GET.get('platform', None)
+#     image_exist = request.GET.get('image_exist', None)
+#     duplicate_group = request.GET.get('duplicate_group', None)
 
-    # Retriving first item 
-    items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
-    items = Item.objects.filter(id__in=items.values('first_item_id'))
-    if duplicate_group:
-        unique_group_ids = items.values('groupId').annotate(first_group_id=Min('id'))
-        items_with_unique_groups = items.filter(id__in=unique_group_ids.values('first_group_id'))
-        items_with_null_group_ids = items.filter(groupId__isnull=True)
-        items = items_with_unique_groups | items_with_null_group_ids
-    # Filtering
-    if title_search:
-        items = items.filter(title__icontains=title_search)
+#     # Retriving first item 
+#     items = Item.objects.values('itemId').annotate(first_item_id=Min('id'))
+#     items = Item.objects.filter(id__in=items.values('first_item_id'))
+#     if duplicate_group:
+#         unique_group_ids = items.values('groupId').annotate(first_group_id=Min('id'))
+#         items_with_unique_groups = items.filter(id__in=unique_group_ids.values('first_group_id'))
+#         items_with_null_group_ids = items.filter(groupId__isnull=True)
+#         items = items_with_unique_groups | items_with_null_group_ids
+#     # Filtering
+#     if title_search:
+#         items = items.filter(title__icontains=title_search)
         
-    if search_id:
-        items = items.filter(itemId__in=search_id.split(","))
+#     if search_id:
+#         items = items.filter(itemId__in=search_id.split(","))
         
-    if brand:
-        items = items.filter(brand=brand)
+#     if brand:
+#         items = items.filter(brand=brand)
     
-    if seller:
-        items = items.filter(sellerName=seller)
+#     if seller:
+#         items = items.filter(sellerName=seller)
     
-    if platform:
-        items = items.filter(platform=platform)
+#     if platform:
+#         items = items.filter(platform=platform)
     
-    if image_exist:
-        items = items.filter(imageExist=True)
+#     if image_exist:
+#         items = items.filter(imageExist=True)
 
-    items = items[offset:offset+24]
+#     items = items[offset:offset+24]
     
-    item_images = {}
-    item_descriptions = {}
-    for item in items:
-        item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId)
-    serialized_data = serializers.serialize("json", items)
-    serialized_data = json.loads(serialized_data)
-    serialized_data 
-    context = {
-        'items': serialized_data,
-        'item_images': item_images,
-        'item_descriptions': item_descriptions
-    }
-    # html = render_to_string('items_list.html', context)
-    return JsonResponse(context)
+#     item_images = {}
+#     item_descriptions = {}
+#     for item in items:
+#         item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId)
+#     serialized_data = serializers.serialize("json", items)
+#     serialized_data = json.loads(serialized_data)
+#     serialized_data 
+#     context = {
+#         'items': serialized_data,
+#         'item_images': item_images,
+#         'item_descriptions': item_descriptions
+#     }
+#     # html = render_to_string('items_list.html', context)
+#     return JsonResponse(context)
 
 def saveMatchedItems(request):
     itemId = request.GET.get('itemId')

@@ -47,6 +47,11 @@
                         <input type="text" id="title_search" name="title_search" placeholder="Enter Title" value="{{title_search}}" >
                     </div>
 
+                    <label class="checkbox-container checkbox-label">Is New Image
+                        <input type="checkbox" name="is_new_image" id="is_new_image" {% if is_new_image %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                    </label>
+
                     <label class="checkbox-container checkbox-label">Image Exist
                         <input type="checkbox" name="image_exist" id="image_exist" {% if image_exist %}checked{% endif %}>
                         <span class="checkmark"></span>
@@ -167,7 +172,7 @@
         </ul>
         <div class="load-more-container">
             {% comment %} <div class="item-count">Showing <span>36</span> out of {{total_items}}</div> {% endcomment %}
-            <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-duplicate-group="{{duplicate_group}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36" disabled>Load More</button>
+            {% comment %} <button id="load-more" data-url="{% url 'load_more_items' %}" data-image-exist="{{image_exist}}" data-duplicate-group="{{duplicate_group}}" data-selected-brand="{{selected_brand}}" data-selected-seller="{{selected_seller}}" data-title-search="{{title_search}}" data-selected-platform="{{selected_platform}}" data-offset="36" disabled>Load More</button> {% endcomment %}
         </div>
     </div>
     <div class="footer"></div>
