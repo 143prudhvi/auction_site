@@ -15,6 +15,8 @@ def filtered_items(request):
     image_exist = request.GET.get('image_exist', None)
     duplicate_group = request.GET.get('duplicate_group', None)
     is_new_image = request.GET.get('is_new_image', None)
+    is_new_group = request.GET.get('is_new_group', None)
+    
     
     
     # Get all items with their corresponding minimum id
@@ -44,6 +46,9 @@ def filtered_items(request):
         
     if is_new_image:
         items = items.filter(isNewImage=True)
+        
+    if is_new_group:
+        items = items.filter(isNewGroup=True)
     
     if duplicate_group:
         unique_group_ids = items.values('groupId').annotate(first_group_id=Min('id'))
@@ -77,6 +82,7 @@ def filtered_items(request):
         'image_exist' : True if image_exist else False,
         'duplicate_group' : True if duplicate_group else False,
         'is_new_image' : True if is_new_image else False,
+        'is_new_group' : True if is_new_group else False,
         'total_items' : total_items
     }
 
@@ -274,7 +280,7 @@ def get_group_page(request, id):
     # Images and Description
     item_images = {}
     for item in items:
-        item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId)
+        item_images[item.itemId] = get_images_from_path("static/Images/" + item.itemId, item.imageExist)
     
     context = {
         'items': items,

@@ -8,7 +8,7 @@ class Item(models.Model):
     itemDescription = models.TextField(null=True)
     pictureLocation = models.TextField(null=True)
     brand = models.CharField(max_length=50, null=True)
-    price = models.CharField(max_length=10, null=True)
+    price = models.CharField(max_length=20, null=True)
     title = models.CharField(max_length=100, default=None, null=True)
     status = models.CharField(max_length=20, choices=[
         ('Active', 'Active'),
